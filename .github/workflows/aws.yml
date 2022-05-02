@@ -42,4 +42,4 @@ jobs:
         echo "${{secrets.SSH_KEY}}" > rocinante.key
         chmod 0644 rocinante.key
         rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p 1820' ./${{ env.PACKAGE_NAME }} ${{env.DEST}}
-        
+        echo "a file - ${{ env.PACKAGE_NAME }} was sent"
