@@ -1,0 +1,26 @@
+name: Deploy_archive
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- main
+
+env:
+  AWS_REGION_NAME: "eu-central-1"
+
+jobs:
+
+  CI_part:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+    
+    - name: Sync
+      run: |
+        echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
+        cat config.in.php
+        
