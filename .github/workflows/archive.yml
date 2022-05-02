@@ -48,14 +48,12 @@ jobs:
     - name: Deploy archive
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
+        DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
-        echo "Set - config.in.php file"
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0777 ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo echo "${{ secrets.CONFIG_IN_PHP }}" > /var/www/html/rocinante/www/dbadmin/config.in.php
-        echo "Set - settings.php file"
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0777 ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo echo "${{ secrets.DB_CONFIG_ADD }}" >> /var/www/html/rocinante/www/sites/default/settings.php
+        echo "Set config.in.php"
+        echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
+        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./config.in.php $DEST
