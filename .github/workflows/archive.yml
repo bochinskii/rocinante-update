@@ -53,7 +53,11 @@ jobs:
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
-        echo "1-st phase is done"
+        echo "Set - config.in.php file"
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0777 ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo echo "${{ secrets.CONFIG_IN_PHP }}" > ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0644 ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
-  
+        echo "Set - settings.php file"
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0777 ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo echo "${{ secrets.DB_CONFIG_ADD }}" >> ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0644 ${{ secrets.SITE_DIR }}/www/sites/default/settings.php 
