@@ -58,5 +58,5 @@ jobs:
     
     - name: Deploy database
       run: |
-        
+        echo "Hello"
         
