@@ -13,7 +13,6 @@ jobs:
 
   CI_part:
     env:
-      PACKAGE_NAME: rocinante_${{ github.sha }}.zip
       DUMP_NAME: rocinante.routine.sql.bz
     
     runs-on: ubuntu-latest
@@ -42,20 +41,8 @@ jobs:
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{ secrets.SSH_KEY }}" > rocinante.key
         chmod 0600 rocinante.key
-        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./${{ env.PACKAGE_NAME }} $DEST
-        echo "A file - ${{ env.PACKAGE_NAME }} was sent"
         rsync -chav -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./db/${{ env.DUMP_NAME }} $DEST
         echo "A file - ${{ env.DUMP_NAME }} was sent"
-        
-
-    - name: Deploy archive
-      run: |
-        IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown nginx: ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }} 
     
     - name: Deploy database
       run: |
