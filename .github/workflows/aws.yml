@@ -33,3 +33,8 @@ jobs:
         zip -q -r $PACKAGE_NAME ./
         mv $PACKAGE_NAME ../
         cd ..
+    
+    - name: Sync
+      run: |
+        IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}"`
+        echo $IP_ADDRESS
