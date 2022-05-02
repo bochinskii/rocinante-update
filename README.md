@@ -8,3 +8,10 @@
 С помощью GitHub Action происходит "заливка" сайта на AWS Instance.
 Action запускается вручную.
 </p>
+<p>
+Status of our Actions:
+</p><br>
+<img src="https://github.com/bochinskii/test/workflows/Deploy_rocinante_to_AWS_EC2_Instance/badge.svg?branch=main"><br>
+<p>
+Denis Bochinskii
+</p>
