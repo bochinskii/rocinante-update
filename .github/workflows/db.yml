@@ -1,4 +1,4 @@
-name: Deploy_rocinante_to_AWS_EC2_Instance
+name: Deploy_db
 
 on:
   workflow_dispatch:
