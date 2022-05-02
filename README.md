@@ -12,6 +12,7 @@ Action запускается вручную.
 Status of our Actions:
 </p>
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_archive/badge.svg?branch=main"><br>
+<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_db/badge.svg?branch=main"><br>
 <p>
 Denis Bochinskii
 </p>
