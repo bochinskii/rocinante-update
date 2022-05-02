@@ -51,7 +51,7 @@ jobs:
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown nginx: ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
         echo "1-st phase is done"
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chmod 0777 ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
