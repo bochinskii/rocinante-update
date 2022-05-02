@@ -60,6 +60,4 @@ jobs:
     - name: Deploy database
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS \
-        sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} \
-        -e "DROP DATABASE IF EXIST ${{ secrets.MYSQL_DRUPAL_DB }};"
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "DROP DATABASE ${{ secrets.MYSQL_DRUPAL_DB }};"
