@@ -1,4 +1,4 @@
-name: Deploy rocinante to AWS EC2 Instance
+name: Deploy_rocinante_to_AWS_EC2_Instance
 
 on:
   workflow_dispatch:
