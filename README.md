@@ -1,4 +1,4 @@
-<h1>Проект "Rocinsnte"</h1><br>
+<h1>Проект "Rocinante"</h1><br>
 <br>
 <p>
 В директории "site" находится сайт на CMS Drupal 9.
