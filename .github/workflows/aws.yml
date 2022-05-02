@@ -39,7 +39,7 @@ jobs:
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
-        echo "${{secrets.SSH_KEY}}" > rocinante.key
+        echo "${{ secrets.SSH_KEY }}" > rocinante.key
         chmod 0644 rocinante.key
-        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p 1820' ./${{ env.PACKAGE_NAME }} ${{env.DEST}}
+        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p 1820' ./${{ env.PACKAGE_NAME }} ${{ env.DEST }}
         echo "a file - ${{ env.PACKAGE_NAME }} was sent"
