@@ -33,4 +33,3 @@ jobs:
         zip -q -r $PACKAGE_NAME ./
         mv $PACKAGE_NAME ../
         cd ..
-        ls -l
