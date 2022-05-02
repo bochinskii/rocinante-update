@@ -55,8 +55,11 @@ jobs:
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown nginx: ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }} 
     
     - name: Deploy database
       run: |
-        echo "Hello - $IP_ADDRESS"
-        
+        IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS \
+        sudo mysql --connect-expired-password -u${{ secret.MYSQL_ADMIN_USER }} -p{{ secret.$MYSQL_ADMIN_USER_PASS }} \
+        -e "DROP DATABASE IF EXIST ${{ secret.MYSQL_DRUPAL_DB }};"
