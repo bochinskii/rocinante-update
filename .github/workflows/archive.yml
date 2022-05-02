@@ -52,7 +52,6 @@ jobs:
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
-        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
         echo "Set config.in.php"
         echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
@@ -61,3 +60,9 @@ jobs:
         cp ./site/sites/default/settings.php .
         echo "${{ secrets.DB_CONFIG_ADD }}" >> settings.php
         rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./settings.php $DEST
+        echo "Moves all files"
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mv /home/ec2-user/config.in.php ${{ secrets.SITE_DIR }}/www/dbadmin/
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mv /home/ec2-user/settings.php ${{ secrets.SITE_DIR }}/www/sites/default/
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
