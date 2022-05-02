@@ -57,3 +57,7 @@ jobs:
         echo "Set config.in.php"
         echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
         rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./config.in.php $DEST
+        echo "Set settings.php"
+        cp ./site/sites/default/settings.php .
+        echo "${{ secrets.DB_CONFIG_ADD }}" >> settings.php
+        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./settings.php $DEST
