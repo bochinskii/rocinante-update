@@ -11,7 +11,7 @@ Action запускается вручную.
 <p>
 Status of our Actions:
 </p><br>
-<img src="https://github.com/bochinskii/test/workflows/Deploy_rocinante_to_AWS_EC2_Instance/badge.svg?branch=main"><br>
+<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_rocinante_to_AWS_EC2_Instance/badge.svg?branch=main"><br>
 <p>
 Denis Bochinskii
 </p>
