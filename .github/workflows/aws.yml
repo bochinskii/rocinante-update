@@ -24,3 +24,13 @@ jobs:
         aws-access-key-id: ${{ secrets.GH_ACTION_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
+    
+    - name: Zip
+      env:
+        PACKAGE_NAME: rocinante_{{ github.sha }}.zip
+      run: |
+        cd ./site
+        zip -q -r $PACKAGE_NAME ./
+        mv $PACKAGE_NAME ../
+        cd ..
+        ls -l
