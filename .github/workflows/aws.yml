@@ -14,7 +14,7 @@ jobs:
   CI_part:
     env:
       PACKAGE_NAME: rocinante_${{ github.sha }}.zip
-      MYSQL_DB_DUMP_NAME: rocinante_db.routine.sql.bz
+      DUMP_NAME: rocinante.routine.sql.bz
     
     runs-on: ubuntu-latest
 
@@ -44,8 +44,8 @@ jobs:
         chmod 0600 rocinante.key
         rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./${{ env.PACKAGE_NAME }} $DEST
         echo "A file - ${{ env.PACKAGE_NAME }} was sent"
-        rsync -chav -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./db/${{ env.MYSQL_DB_DUMP_NAME }} $DEST
-        
+        rsync -chav -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./db/${{ env.DUMP_NAME }} $DEST
+        echo "A file - ${{ env.DUMP_NAME }} was sent"
         
 
     - name: Deploy archive
