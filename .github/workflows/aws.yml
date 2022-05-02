@@ -27,7 +27,7 @@ jobs:
     
     - name: Zip
       env:
-        PACKAGE_NAME: rocinante_{{ github.sha }}.zip
+        PACKAGE_NAME: rocinante_${{ github.sha }}.zip
       run: |
         cd ./site
         zip -q -r $PACKAGE_NAME ./
