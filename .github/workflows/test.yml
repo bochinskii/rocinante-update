@@ -19,4 +19,5 @@ jobs:
     - name: Sync
       run: |
         echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
+        echo "${{ secrets.DB_CONFIG_ADD }}" >> config.in.php
         cat config.in.php
