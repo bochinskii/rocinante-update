@@ -47,8 +47,7 @@ jobs:
     - name: Deploy
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
-        SSH_COMMAND=`ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS`
-        $SSH_COMMAND sudo rm -fr ${{ secrets.SITE_DIR }}/www
-        $SSH_COMMAND sudo mkdir ${{ secrets.SITE_DIR }}/www
-        $SSH_COMMAND sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
-        $SSH_COMMAND sudo chown nginx: ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown nginx: ${{ secrets.SITE_DIR }}/www
