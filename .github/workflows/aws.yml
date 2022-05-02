@@ -41,5 +41,5 @@ jobs:
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{secrets.SSH_KEY}}" > rocinante.key
         chmod 0644 rocinante.key
-        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p 1820' ./${{ env.PACKAGE_NAME }} ${{env.dest}}
+        rsync -chav --delete -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p 1820' ./${{ env.PACKAGE_NAME }} ${{env.DEST}}
         
