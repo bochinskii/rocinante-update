@@ -45,4 +45,5 @@ jobs:
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{ secrets.DEPLOY_DB_SCRIPT }}" > deploy_db.sh
+        rsync -chav -e 'ssh -i ./rocinante.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./deploy_db.sh $DEST
         
