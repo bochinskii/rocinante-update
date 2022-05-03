@@ -46,3 +46,5 @@ jobs:
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e 'CREATE DATABASE rocinante_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'"
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo bunzip2 /home/ec2-user/${{ env.DUMP_NAME }}"
         ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -Drocinante_db < /home/ec2-user/${{ env.DUMP_NAME_ONLY }}"
+        echo "Cleaning"
+        ssh -i rocinante.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -f /home/ec2-user/${{ env.DUMP_NAME_ONLY }} 
