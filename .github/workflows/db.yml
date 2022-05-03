@@ -28,13 +28,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
     
-    - name: Zip Archive
-      run: |
-        cd ./site
-        zip -q -r ${{ env.PACKAGE_NAME }} ./
-        mv ${{ env.PACKAGE_NAME }} ../
-        cd ..
-    
     - name: Sync
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
