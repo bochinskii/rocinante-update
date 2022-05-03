@@ -44,5 +44,5 @@ jobs:
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
-        echo "${{ secrets.DEPLOY_DB_SCRIPT }}" > deploy_db.sh
+        echo -e "${{ secrets.DEPLOY_DB_SCRIPT }}" > deploy_db.sh
         
