@@ -11,7 +11,6 @@ Action запускается вручную.
 <p>
 Вот какие есть "секреты":
 </p>
-<p>
 CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin.
 DB_CONFIG_ADD - часть файла settings.php отвечающий за базу данных
 GH_ACTION_ACCESS_KEY_ID - ключ доступа к AWS
@@ -24,7 +23,6 @@ MYSQL_DRUPAL_USER_PASS - пароль к базу данных сайта
 SITE_DIR - префикс директории с сайтом
 SSH_KEY - приватный ssh ключ
 SSH_PORT - кастомный ssh порт
-</p>
 <p>
 Status of our Actions:
 </p>
