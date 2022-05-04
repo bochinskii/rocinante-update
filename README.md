@@ -23,6 +23,7 @@ MYSQL_DRUPAL_USER_PASS - пароль к базу данных сайта;<br>
 SITE_DIR - префикс директории с сайтом;<br>
 SSH_KEY - приватный ssh ключ;<br>
 SSH_PORT - кастомный ssh порт;<br>
+<br>
 <p>
 Status of our Actions:
 </p>
