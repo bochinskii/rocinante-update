@@ -11,8 +11,8 @@ Action запускается вручную.
 <p>
 Вот какие есть "секреты":
 </p>
-CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin.
-DB_CONFIG_ADD - часть файла settings.php отвечающий за базу данных
+CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin.<br>
+DB_CONFIG_ADD - часть файла settings.php отвечающий за базу данных<br>
 GH_ACTION_ACCESS_KEY_ID - ключ доступа к AWS
 GH_ACTION_SECRET_ACCESS_KEY - секретный ключ для доступа к AWS
 MYSQL_ADMIN_USER - имя mysql администратора
