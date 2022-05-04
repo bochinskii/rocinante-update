@@ -1,4 +1,4 @@
-<h1>Проект "Rocinante"</h1><br>
+<h1>Проект "Rocinante Update"</h1><br>
 <br>
 <p>
 В директории "site" находится сайт на CMS Drupal 9.
@@ -7,7 +7,24 @@
 <p>
 С помощью GitHub Action происходит "заливка" сайта на AWS Instance.
 Action запускается вручную.
-</p><br>
+</p>
+<p>
+Вот какие есть "секреты":
+</p>
+<p>
+CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin.
+DB_CONFIG_ADD - часть файла settings.php отвечающий за базу данных
+GH_ACTION_ACCESS_KEY_ID - ключ доступа к AWS
+GH_ACTION_SECRET_ACCESS_KEY - секретный ключ для доступа к AWS
+MYSQL_ADMIN_USER - имя mysql администратора
+MYSQL_ADMIN_USER_PASS - пароль mysql администратора
+MYSQL_DRUPAL_DB - имя базы данных сайта
+MYSQL_DRUPAL_USER - имя пользователя к базе данных сайта
+MYSQL_DRUPAL_USER_PASS - пароль к базу данных сайта
+SITE_DIR - префикс директории с сайтом
+SSH_KEY - приватный ssh ключ
+SSH_PORT - кастомный ssh порт
+</p>
 <p>
 Status of our Actions:
 </p>
