@@ -6,7 +6,9 @@
 </p>
 <p>
 С помощью GitHub Action происходит "заливка" сайта на AWS Instance.
-Action запускается вручную.
+Deploy_archive "заливает" файлы сайта на ec2 instance.
+Deploy_db "заливает" дамп базы данных на ec2 instance.
+Action'ы запускается вручную.
 </p>
 <p>
 Вот какие есть "секреты":
