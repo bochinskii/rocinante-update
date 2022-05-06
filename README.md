@@ -38,6 +38,7 @@ Status of our Actions:
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_db/badge.svg?branch=main"><br>
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_archive_v2/badge.svg?branch=main"><br>
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_db_v2/badge.svg?branch=main"><br>
+<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_Drupal_9_site/badge.svg?branch=main"><br>
 <br>
 <p>
 Denis Bochinskii
