@@ -1,11 +1,11 @@
-name: add_configs_v2
+name: Deploy_archive_v2
 
 on:
   workflow_dispatch:
   #push:
     #branches:
       #- main
-
+      
 env:
   AWS_REGION_NAME: "eu-central-1"
 
@@ -14,8 +14,8 @@ jobs:
   CI_part:
   
     env:
-        SSL_CERT: rocinante.crt
-        SSL_KEY: rocinante.key
+        PACKAGE_NAME: rocinante_${{ github.sha }}.zip
+        
 
     runs-on: ubuntu-latest
 
@@ -31,10 +31,18 @@ jobs:
         aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
     
-    - name: Preper certs
+    - name: Prepare Zip Archive
       run: |
-        echo "${{ secrets.REAL_KEY }}" > real_rocinante.key
-        chmod 0600 real_rocinante.key
+        cd ./site
+        zip -q -r ${{ env.PACKAGE_NAME }} ./
+        mv ${{ env.PACKAGE_NAME }} ../
+        cd ..
+    
+    - name: Prepere config files
+      run: |
+        echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
+        cp ./site/sites/default/settings.php .
+        echo "${{ secrets.DB_CONFIG_ADD }}" >> settings.php
     
     - name: Get Variables
       run: |
@@ -52,7 +60,7 @@ jobs:
         username: ec2-user
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
-        source: "configs/*,real_rocinante.cert,real_rocinante.key"
+        source: "${{ env.PACKAGE_NAME }},config.in.php,settings.php"
         target: "/home/ec2-user"
     
     - name: multiple command
@@ -63,23 +71,13 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          sudo systemctl stop nginx
-          sudo systemctl stop php-fpm
-          sudo systemctl stop mysqld
-          sudo chown -R root: /home/ec2-user/configs
-          sudo chown root: /home/ec2-user/real_rocinante.*
-          sudo rm -f /etc/my.cnf
-          sudo rm -f /etc/php.ini
-          sudo rm -f /etc/nginx/nginx.conf
-          sudo rm -f /etc/nginx/tls/${{ env.SSL_CERT }}
-          sudo rm -f /etc/nginx/tls/${{ env.SSL_KEY }}
-          sudo mv /home/ec2-user/configs/my.cnf /etc/
-          sudo mv /home/ec2-user/configs/php.ini /etc/
-          sudo mv /home/ec2-user/configs/nginx.conf /etc/nginx/
-          sudo mv /home/ec2-user/configs/{basic.conf,gzip.conf,limits.conf,tls.conf,zone_limits.conf} /etc/nginx/conf.d/
-          sudo mv /home/ec2-user/configs/nginx.conf /etc/nginx/
-          sudo mv /home/ec2-user/real_rocinante.cert /etc/nginx/tls/${{ env.SSL_CERT }}
-          sudo mv /home/ec2-user/real_rocinante.key /etc/nginx/tls/${{ env.SSL_KEY }}
-          sudo systemctl start mysqld
-          sudo systemctl start php-fpm
-          sudo systemctl start nginx
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www
+          sudo mkdir ${{ secrets.SITE_DIR }}/www
+          sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
+          sudo mv /home/ec2-user/config.in.php ${{ secrets.SITE_DIR }}/www/dbadmin/
+          sudo mv /home/ec2-user/settings.php ${{ secrets.SITE_DIR }}/www/sites/default/
+          sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
+          sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
+          
