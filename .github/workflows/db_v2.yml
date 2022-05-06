@@ -15,6 +15,7 @@ jobs:
     env:
       DUMP_NAME: rocinante.routine.sql.bz
       DUMP_NAME_ONLY: rocinante.routine.sql
+      DRUPAL_DB: ${{ secrets.MYSQL_DRUPAL_DB }}
     
     runs-on: ubuntu-latest
 
