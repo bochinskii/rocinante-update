@@ -49,16 +49,16 @@ jobs:
         target: "/home/ec2-user"
         strip_components: 1
     
-    #- name: multiple command
-    #  uses: appleboy/ssh-action@master
-    #  with:
-    #    host: ${{ env.IP_ADDRESS }}
-    #    username: ec2-user
-    #    key: ${{ secrets.SSH_KEY }}
-    #    port: ${{ secrets.SSH_PORT }}
-    #    script: |
-    #      sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "DROP DATABASE IF EXISTS ${{ env.DRUPAL_DB }};"
-    #      sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "CREATE DATABASE ${{ env.DRUPAL_DB }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    #      sudo bunzip2 /home/ec2-user/${{ env.DUMP_NAME }}
-    #      sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D $DRUPAL_DB < /home/ec2-user/${{ env.DUMP_NAME_ONLY }}
-    #      sudo rm -f /home/ec2-user/${{ env.DUMP_NAME_ONLY }} 
+    - name: multiple command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "DROP DATABASE IF EXISTS ${{ env.DRUPAL_DB }};"
+          sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "CREATE DATABASE ${{ env.DRUPAL_DB }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          sudo bunzip2 /home/ec2-user/${{ env.DUMP_NAME }}
+          sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D $DRUPAL_DB < /home/ec2-user/${{ env.DUMP_NAME_ONLY }}
+          sudo rm -f /home/ec2-user/${{ env.DUMP_NAME_ONLY }} 
