@@ -11,6 +11,9 @@
 С помощью GitHub Action - Deploy_db_v2 (Deploy_db) происходит заливка актуальной базы данных сайта на определенный AWS Instance.
 </p>
 <p>
+С помощью GitHub Action - Deploy_Drupal_9_site происходит заливка архива и базы данных сайта в одном action'е
+.</p>
+<p>
 Вот какие есть "секреты":
 </p>
 CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin;<br>
