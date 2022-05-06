@@ -1,0 +1,82 @@
+name: Deploy_archive_v2
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- main
+      
+env:
+  AWS_REGION_NAME: "eu-central-1"
+
+jobs:
+
+  CI_part:
+  
+    env:
+        PACKAGE_NAME: rocinante_${{ github.sha }}.zip
+        
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Clone repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.GH_ACTION_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION_NAME }}
+    
+    - name: Prepare Zip Archive
+      run: |
+        cd ./site
+        zip -q -r ${{ env.PACKAGE_NAME }} ./
+        mv ${{ env.PACKAGE_NAME }} ../
+        cd ..
+    
+    - name: Prepere config files
+      run: |
+        echo "${{ secrets.CONFIG_IN_PHP }}" > config.in.php
+        cp ./site/sites/default/settings.php .
+        echo "${{ secrets.DB_CONFIG_ADD }}" >> settings.php
+    
+    - name: Get Variables
+      run: |
+        IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text | grep -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}$"`
+        echo "$IP_ADDRESS"
+        echo "IP_ADDRESS=$IP_ADDRESS" >> $GITHUB_ENV
+    
+    - name: Test
+      run: echo ${{ env.IP_ADDRESS }}
+      
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "${{ env.PACKAGE_NAME }},config.in.php,settings.php"
+        target: "/home/ec2-user"
+    
+    - name: multiple command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www
+          sudo mkdir ${{ secrets.SITE_DIR }}/www
+          sudo unzip -q ${{ env.PACKAGE_NAME }} -d ${{ secrets.SITE_DIR }}/www
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www/dbadmin/config.in.php
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www/sites/default/settings.php
+          sudo mv /home/ec2-user/config.in.php ${{ secrets.SITE_DIR }}/www/dbadmin/
+          sudo mv /home/ec2-user/settings.php ${{ secrets.SITE_DIR }}/www/sites/default/
+          sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
+          sudo rm -f /home/ec2-user/${{ env.PACKAGE_NAME }}
