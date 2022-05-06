@@ -61,5 +61,5 @@ jobs:
           sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "DROP DATABASE IF EXISTS ${{ env.DRUPAL_DB }};"
           sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e "CREATE DATABASE ${{ env.DRUPAL_DB }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
           sudo bunzip2 /home/ec2-user/${{ env.DUMP_NAME }}
-          sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D $DRUPAL_DB < /home/ec2-user/${{ env.DUMP_NAME_ONLY }}
+          sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D ${{ env.DRUPAL_DB }} < /home/ec2-user/${{ env.DUMP_NAME_ONLY }}
           sudo rm -f /home/ec2-user/${{ env.DUMP_NAME_ONLY }} 
