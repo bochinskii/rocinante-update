@@ -1,0 +1,85 @@
+name: add_configs_v2
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- main
+
+env:
+  AWS_REGION_NAME: "eu-central-1"
+
+jobs:
+
+  CI_part:
+  
+    env:
+        SSL_CERT: rocinante.crt
+        SSL_KEY: rocinante.key
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Clone repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.GH_ACTION_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION_NAME }}
+    
+    - name: Preper certs
+      run: |
+        echo "${{ secrets.REAL_KEY }}" > real_rocinante.key
+        chmod 0600 real_rocinante.key
+    
+    - name: Get Variables
+      run: |
+        IP_ADDRESS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=rocinante" --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
+        echo "$IP_ADDRESS"
+        echo "IP_ADDRESS=$IP_ADDRESS" >> $GITHUB_ENV
+    
+    - name: Test
+      run: echo ${{ env.IP_ADDRESS }}
+      
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "configs/*,real_rocinante.cert,real_rocinante.key"
+        target: "/home/ec2-user"
+    
+    - name: multiple command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo systemctl stop nginx
+          sudo systemctl stop php-fpm
+          sudo systemctl stop mysqld
+          sudo chown -R root: /home/ec2-user/configs
+          sudo chown root: /home/ec2-user/real_rocinante.*
+          sudo rm -f /etc/my.cnf
+          sudo rm -f /etc/php.ini
+          sudo rm -f /etc/nginx/nginx.conf
+          sudo rm -f /etc/nginx/tls/${{ env.SSL_CERT }}
+          sudo rm -f /etc/nginx/tls/${{ env.SSL_KEY }}
+          sudo mv /home/ec2-user/configs/my.cnf /etc/
+          sudo mv /home/ec2-user/configs/php.ini /etc/
+          sudo mv /home/ec2-user/configs/nginx.conf /etc/nginx/
+          sudo mv /home/ec2-user/configs/{basic.conf,gzip.conf,limits.conf,tls.conf,zone_limits.conf} /etc/nginx/conf.d/
+          sudo mv /home/ec2-user/configs/nginx.conf /etc/nginx/
+          sudo mv /home/ec2-user/real_rocinante.cert /etc/nginx/tls/${{ env.SSL_CERT }}
+          sudo mv /home/ec2-user/real_rocinante.key /etc/nginx/tls/${{ env.SSL_KEY }}
+          sudo systemctl start mysqld
+          sudo systemctl start php-fpm
+          sudo systemctl start nginx
