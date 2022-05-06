@@ -6,6 +6,8 @@
 </p>
 <p>
 С помощью GitHub Action - Deploy_archive_v2 (Deploy_archive) происходит заливка актуальных файлов сайта на определенный AWS Instance.
+</p>
+<p>
 С помощью GitHub Action - Deploy_db_v2 (Deploy_db) происходит заливка актуальной базы данных сайта на определенный AWS Instance.
 </p>
 <p>
