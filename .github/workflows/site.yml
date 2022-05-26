@@ -1,0 +1,52 @@
+name: Deploy_Drupal_9_site
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- main
+
+env:
+  AWS_REGION_NAME: "eu-central-1"
+
+jobs:
+
+  Site:
+
+    env:
+      ARCHIVE_NAME: "rocinante_220503.tar.bz"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.GH_ACTION_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION_NAME }}
+
+    - name: Get IP Address
+      run: |
+        IP_ADDRESS=`aws ec2 describe-instances --filters Name=tag:Name,Values=rocinante Name=instance-state-name,Values=running --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
+        echo "$IP_ADDRESS"
+        echo "IP_ADDRESS=$IP_ADDRESS" >> $GITHUB_ENV
+
+    - name: Test variable
+      run: echo ${{ env.IP_ADDRESS }}
+
+    - name: multiple command
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ env.IP_ADDRESS }}
+        username: ec2-user
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo rm -fr ${{ secrets.SITE_DIR }}/www
+          sudo mkdir ${{ secrets.SITE_DIR }}/www
+          sudo tar -xvf /home/ec2-user/data/${{ env.ARCHIVE_NAME }} -C ${{ secrets.SITE_DIR}}/www --strip-components=1
+          sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
