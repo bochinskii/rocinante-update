@@ -1,23 +1,22 @@
 <h1>Проект "Rocinante Update"</h1><br>
 <br>
 <p>
-В директории "site" проекта находится сайт на CMS Drupal 9.
-В диретории "db" находится сжатый dump базы дынных данного сайта.
+С помощью GitHub Action - "Deploy_Drupal_9_site" происходит развертывания сайта на CMS Drupal 9
+на AWS ec2 instance.
 </p>
 <p>
-С помощью GitHub Action - Deploy_archive_v2 (Deploy_archive) происходит заливка актуальных файлов сайта на определенный AWS Instance.
+В директории "data" находится зашифрованные архив сайта и dump базы данных.
+В директории "gpg" находится публичный gpg ключ, которым шифровались данные, а с
+помощью данного action'а и переменной GPG_KEY данный ключ экспортируется для
+рассшифровки данных.
 </p>
 <p>
-С помощью GitHub Action - Deploy_db_v2 (Deploy_db) происходит заливка актуальной базы данных сайта на определенный AWS Instance.
+Есть actions'ы - "Prepering", "Site", "Database". Это куски одного целого action'а -
+"Deploy_Drupal_9_site"
 </p>
-<p>
-С помощью GitHub Action - Deploy_Drupal_9_site происходит заливка архива и базы данных сайта в одном action'е
-.</p>
 <p>
 Вот какие есть "секреты":
 </p>
-CONFIG_IN_PHP - файл config.ini.php для MyPHP Admin;<br>
-DB_CONFIG_ADD - часть файла settings.php отвечающий за базу данных;<br>
 <br>
 GH_ACTION_ACCESS_KEY_ID - ключ доступа к AWS;<br>
 GH_ACTION_SECRET_ACCESS_KEY - секретный ключ для доступа к AWS;<br>
@@ -35,12 +34,12 @@ SSH_KEY - приватный ssh ключ;<br>
 SSH_PORT - кастомный ssh порт;<br>
 <br>
 <p>
+GPG_KEY - ключи для дешифрования данных;
+GPG_PASSWORD - пароль к ключу;
+</p>
+<p>
 Status of our Actions:
 </p>
-<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_archive/badge.svg?branch=main"><br>
-<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_db/badge.svg?branch=main"><br>
-<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_archive_v2/badge.svg?branch=main"><br>
-<img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_db_v2/badge.svg?branch=main"><br>
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_Drupal_9_site/badge.svg?branch=main"><br>
 <br>
 <p>
