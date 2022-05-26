@@ -1,0 +1,57 @@
+name: example_site
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- main
+
+env:
+  AWS_REGION_NAME: "eu-central-1"
+
+jobs:
+
+  CI_part:
+
+    env:
+      GPG_ID: "126833D0A5DBB929717B4CFD5DD2E6DF5EE1E8E3"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.GH_ACTION_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.GH_ACTION_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION_NAME }}
+
+    - name: test gpg
+      run: |
+        ls -l
+        gpg --version
+
+    - name: Export and Import gpg key
+      run: |
+        echo "${{ secrets.GPG_KEY }}" > ./gpg/gpg.key
+        gpg --import ./gpg/gpg.pub
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSWORD }}" --allow-secret-key-import --import ./gpg/gpg.key
+        gpg --list-key ${{ env.GPG_ID }}
+        gpg --list-secret-key ${{ env.GPG_ID }}
+
+    - name: Decrypt data
+      run: |
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSWORD }}" --decrypt -r ${{ env.GPG_ID }} ./data/rocinante_db_220503.sql.bz.asc > ./data/rocinante_db_220503.sql.bz
+        gpg --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSWORD }}" --decrypt -r ${{ env.GPG_ID }} ./data/rocinante_220503.tar.bz.asc > ./data/rocinante_220503.tar.bz
+        rm -f ./data/{rocinante_db_220503.sql.bz.asc,rocinante_220503.tar.bz.asc}
+
+    - name: Sync
+      run: |
+        IP_ADDRESS=`aws ec2 describe-instances --filters Name=tag:Name,Values=rocinante Name=instance-state-name,Values=running --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
+        DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
+        echo "${{ secrets.SSH_KEY }}" > ssh_key.key
+        chmod 0600 ssh_key.key
+        rsync -chav --delete -e 'ssh -i ./ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }}' ./data $DEST/
