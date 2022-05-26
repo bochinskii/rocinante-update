@@ -1,4 +1,4 @@
-name: example_site
+name: example_prepere
 
 on:
   workflow_dispatch:
