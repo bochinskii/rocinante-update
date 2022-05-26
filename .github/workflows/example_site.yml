@@ -34,7 +34,7 @@ jobs:
         DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{ secrets.SSH_KEY }}" > ssh_key.key
         chmod 0600 ssh_key.key
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/${{ env.ARCHIVE_NAME }} -C ${{ secrets.SITE_DIR}}/www --strip-components=1
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo mkdir ${{ secrets.SITE_DIR }}/www
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/${{ env.ARCHIVE_NAME }} -C ${{ secrets.SITE_DIR}}/www --strip-components=1
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo chown -R nginx: ${{ secrets.SITE_DIR }}/www
