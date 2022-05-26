@@ -33,10 +33,9 @@ jobs:
     - name: Deploy site database
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters Name=tag:Name,Values=rocinante Name=instance-state-name,Values=running --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
-        DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{ secrets.SSH_KEY }}" > ssh_key.key
         chmod 0600 ssh_key.key
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e 'DROP DATABASE IF EXISTS ${{ secrets.MYSQL_DRUPAL_DB }}';"
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e 'CREATE DATABASE ${{ secrets.MYSQL_DRUPAL_DB }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/${{ env.DB_DUMP_NAME }}
-        ssh -i ssh_key.key -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D ${{ secrets.MYSQL_DRUPAL_DB }} < /home/ec2-user/data/${{ env.DB_DUMP_NAME_ONLY }}"
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e 'DROP DATABASE IF EXISTS ${{ secrets.MYSQL_DRUPAL_DB }}';"
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -e 'CREATE DATABASE ${{ secrets.MYSQL_DRUPAL_DB }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/${{ env.DB_DUMP_NAME }}
+        ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u${{ secrets.MYSQL_ADMIN_USER }} -p${{ secrets.MYSQL_ADMIN_USER_PASS }} -A -D ${{ secrets.MYSQL_DRUPAL_DB }} < /home/ec2-user/data/${{ env.DB_DUMP_NAME_ONLY }}"

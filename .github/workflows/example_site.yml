@@ -31,7 +31,6 @@ jobs:
     - name: Deploy site archive
       run: |
         IP_ADDRESS=`aws ec2 describe-instances --filters Name=tag:Name,Values=rocinante Name=instance-state-name,Values=running --query "Reservations[*].Instances[*].{IP:PublicIpAddress}" --output text`
-        DEST="ec2-user@$IP_ADDRESS:/home/ec2-user"
         echo "${{ secrets.SSH_KEY }}" > ssh_key.key
         chmod 0600 ssh_key.key
         ssh -i ssh_key.key -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ec2-user@$IP_ADDRESS sudo rm -fr ${{ secrets.SITE_DIR }}/www
