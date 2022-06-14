@@ -13,9 +13,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echo $GPG_KEY > ./gpg/gpg.key'
                 sh 'gpg --import ./gpg/gpg.pub'
-                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --allow-secret-key-import --import ./gpg/gpg.key'
+                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --allow-secret-key-import --import $GPG_KEY'
                 sh 'gpg --list-key $GPG_ID'
                 sh 'gpg --list-secret-key $GPG_ID'
             }
