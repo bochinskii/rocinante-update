@@ -29,9 +29,9 @@ pipeline {
                 sshPublisher(
                     publishers: [
                             sshPublisherDesc(
-                                configName: 'rocinante-lemp',
+                                configName: "$SSH_CONFIG_NAME",
                                 sshCredentials: [
-                                    keyPath: "${env.SSH_KEY}",
+                                    keyPath: "${SSH_KEY}",
                                     username: 'ec2-user'
                                 ],
                                 transfers: [
@@ -47,7 +47,7 @@ pipeline {
                                         remoteDirectory: '',
                                         remoteDirectorySDF: false,
                                         removePrefix: '',
-                                        sourceFiles: './data/*'
+                                        sourceFiles: "data/*.bz"
                                     )
 
                                 ],
