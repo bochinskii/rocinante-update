@@ -13,6 +13,7 @@ pipeline {
         SSH_KEY = credentials('rocinante_ssh_key')
         SITE_DIR = "/var/www/html/rocinante"
         IP_ADDRESS = "3.71.101.191"
+        ARCHIVE_NAME = "rocinante_220503.tar.bz"
     }
     stages {
         stage('Decript') {
@@ -63,7 +64,10 @@ pipeline {
         }
         stage('Deployment') {
             steps {
-                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www'
+                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www'
+                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo mkdir $SITE_DIR/www'
+                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1'
+                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo chown -R nginx: $SITE_DIR/www'
             }
         }
     }
