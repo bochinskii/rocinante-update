@@ -29,7 +29,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                             sshPublisherDesc(
-                                configName: '${SSH_CONFIG_NAME}',
+                                configName: 'rocinante-lemp',
                                 sshCredentials: [
                                     keyPath: '${SSH_KEY}',
                                     username: 'ec2-user'
