@@ -15,8 +15,11 @@ pipeline {
             steps {
                 sh 'gpg --import ./gpg/gpg.pub'
                 sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --allow-secret-key-import --import $GPG_KEY'
-                sh 'gpg --list-key $GPG_ID'
-                sh 'gpg --list-secret-key $GPG_ID'
+                sh 'gpg --list-key "$GPG_ID"'
+                sh 'gpg --list-secret-key "$GPG_ID"'
+                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_db_220503.sql.bz.asc > ./data/rocinante_db_220503.sql.bz'
+                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_220503.tar.bz.asc > ./data/rocinante_220503.tar.bz'
+                sh 'rm -f ./data/{rocinante_db_220503.sql.bz.asc,rocinante_220503.tar.bz.asc}'
             }
         }
     }
