@@ -11,6 +11,8 @@ pipeline {
         GPG_ID = "126833D0A5DBB929717B4CFD5DD2E6DF5EE1E8E3"
         SSH_CONFIG_NAME = "rocinante-lemp"
         SSH_KEY = credentials('rocinante_ssh_key')
+        SITE_DIR = "/var/www/html/rocinante"
+        IP_ADDRESS = "3.71.101.191"
     }
     stages {
         stage('Decript') {
@@ -57,6 +59,11 @@ pipeline {
                             )
                     ]
                 )
+            }
+        }
+        stage('Deployment') {
+            steps {
+                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www'
             }
         }
     }
