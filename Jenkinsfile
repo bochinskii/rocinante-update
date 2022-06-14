@@ -31,7 +31,7 @@ pipeline {
                             sshPublisherDesc(
                                 configName: 'rocinante-lemp',
                                 sshCredentials: [
-                                    keyPath: '${SSH_KEY}',
+                                    keyPath: '${env.SSH_KEY}',
                                     username: 'ec2-user'
                                 ],
                                 transfers: [
