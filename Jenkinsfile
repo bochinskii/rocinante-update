@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'agent001 || agent002'
+        label 'master-jen'
     }
     options {
         skipStagesAfterUnstable()
