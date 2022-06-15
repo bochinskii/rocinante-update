@@ -104,4 +104,20 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo "Clean up"
+            deleteDir()
+            script {
+                def remote = [:]
+                remote.name = "rocinante-lemp"
+                remote.host = "$IP_ADDRESS"
+                remote.user = 'ec2-user'
+                remote.identityFile = "$SSH_KEY"
+                remote.allowAnyHosts = true
+
+                sshCommand remote: remote, command: "sudo rm -fr /home/ec2-user/data"
+            }
+        }
+    }
 }
