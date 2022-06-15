@@ -12,7 +12,7 @@ pipeline {
         SSH_CONFIG_NAME = "rocinante-lemp"
         SSH_KEY = credentials('rocinante_ssh_key')
         SITE_DIR = "/var/www/html/rocinante"
-        IP_ADDRESS = "3.71.101.191"
+        IP_ADDRESS = "18.185.66.222"
         ARCHIVE_NAME = "rocinante_220503.tar.bz"
         MYSQL_ADMIN = credentials('rocinante_mysql_admin')
         MYSQL_DRUPAL_DB = credentials('rocinante_mysql_drupal_db')
