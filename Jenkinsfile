@@ -20,13 +20,6 @@ pipeline {
         DB_DUMP_NAME = "rocinante_db_220503.sql.bz"
         DB_DUMP_NAME_ONLY = "rocinante_db_220503.sql"
     }
-    def remote = [:]
-    remote.name = "rocinante-lemp"
-    remote.host = "$IP_ADDRESS"
-    remote.user = 'ec2-user'
-    remote.identityFile = "$SSH_KEY"
-    remote.port = "$SSH_PORT"
-    remote.allowAnyHosts = true
     stages {
         stage('Decript') {
             steps {
@@ -77,6 +70,13 @@ pipeline {
         }
         stage('Deployment Site') {
             steps {
+                def remote = [:]
+                remote.name = "rocinante-lemp"
+                remote.host = "$IP_ADDRESS"
+                remote.user = 'ec2-user'
+                remote.identityFile = "$SSH_KEY"
+                remote.port = "$SSH_PORT"
+                remote.allowAnyHosts = true
                 sshCommand remote: remote, command: "sudo rm -fr $SITE_DIR/www"
                 sshCommand remote: remote, command: "sudo mkdir $SITE_DIR/www"
                 sshCommand remote: remote, command: "sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1"
