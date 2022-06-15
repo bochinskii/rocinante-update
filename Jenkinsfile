@@ -70,18 +70,20 @@ pipeline {
         }
         stage('Deployment Site') {
             steps {
-                remote = [
-                    name = "rocinante-lemp"
-                    host = "$IP_ADDRESS"
-                    user = 'ec2-user'
-                    identityFile = "$SSH_KEY"
-                    port = "$SSH_PORT"
-                    allowAnyHosts = true
-                ]
-                sshCommand remote: remote, command: "sudo rm -fr $SITE_DIR/www"
-                sshCommand remote: remote, command: "sudo mkdir $SITE_DIR/www"
-                sshCommand remote: remote, command: "sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1"
-                sshCommand remote: remote, command: "sudo chown -R nginx: $SITE_DIR/www"
+                script {
+                    def remote = [
+                        name = "rocinante-lemp"
+                        host = "$IP_ADDRESS"
+                        user = 'ec2-user'
+                        identityFile = "$SSH_KEY"
+                        port = "$SSH_PORT"
+                        allowAnyHosts = true
+                    ]
+                    sshCommand remote: remote, command: "sudo rm -fr $SITE_DIR/www"
+                    sshCommand remote: remote, command: "sudo mkdir $SITE_DIR/www"
+                    sshCommand remote: remote, command: "sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1"
+                    sshCommand remote: remote, command: "sudo chown -R nginx: $SITE_DIR/www"
+                }
             }
         }
         //stage('Deployment DB') {
