@@ -46,7 +46,7 @@ Status of our Actions:
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_Drupal_9_site/badge.svg?branch=main"><br>
 <br>
 <p>
-Так же есть 2-а Jenkinsfile'а: Jenkinsfile_v1 и Jenkinsfile_v2. Они выполняют походую функцию
+Так же есть 2-а Jenkinsfile'а: Jenkinsfile_v1 и Jenkinsfile_v2. Они выполняют похожую функцию
 как и GitHub Actions.
 </p>
 <p>
