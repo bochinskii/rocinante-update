@@ -14,17 +14,22 @@ pipeline {
         SITE_DIR = "/var/www/html/rocinante"
         IP_ADDRESS = "3.71.101.191"
         ARCHIVE_NAME = "rocinante_220503.tar.bz"
+        MYSQL_ADMIN = credentials('rocinante_mysql_admin')
+        MYSQL_DRUPAL_DB = credentials('rocinante_mysql_drupal_db')
+        DB_DUMP_NAME = "rocinante_db_220503.sql.bz"
+        DB_DUMP_NAME_ONLY = "rocinante_db_220503.sql"
     }
     stages {
         stage('Decript') {
             steps {
-                sh 'gpg --import ./gpg/gpg.pub'
-                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --allow-secret-key-import --import $GPG_KEY'
-                sh 'gpg --list-key "$GPG_ID"'
-                sh 'gpg --list-secret-key "$GPG_ID"'
-                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_db_220503.sql.bz.asc > ./data/rocinante_db_220503.sql.bz'
-                sh 'gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_220503.tar.bz.asc > ./data/rocinante_220503.tar.bz'
-                sh 'rm -f ./data/{rocinante_db_220503.sql.bz.asc,rocinante_220503.tar.bz.asc}'
+                sh '''
+                    gpg --import ./gpg/gpg.pub
+                    gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --allow-secret-key-import --import $GPG_KEY
+                    gpg --list-key "$GPG_ID"
+                    gpg --list-secret-key "$GPG_ID"
+                    gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_db_220503.sql.bz.asc > ./data/rocinante_db_220503.sql.bz
+                    gpg --pinentry-mode=loopback --passphrase "$GPG_PASSWORD" --decrypt -r "$GPG_ID" ./data/rocinante_220503.tar.bz.asc > ./data/rocinante_220503.tar.bz
+                '''
             }
         }
         stage('SSH transfer') {
@@ -62,12 +67,24 @@ pipeline {
                 )
             }
         }
-        stage('Deployment') {
+        stage('Deployment Site') {
             steps {
-                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www'
-                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo mkdir $SITE_DIR/www'
-                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1'
-                sh 'ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo chown -R nginx: $SITE_DIR/www'
+                sh '''
+                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www
+                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo mkdir $SITE_DIR/www
+                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1
+                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo chown -R nginx: $SITE_DIR/www
+                '''
+            }
+        }
+        stage('Deployment DB') {
+            steps {
+                sh '''
+                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'DROP DATABASE IF EXISTS $MYSQL_DRUPAL_DB';"
+                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'CREATE DATABASE $MYSQL_DRUPAL_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
+                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/$DB_DUMP_NAME
+                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -A -D $MYSQL_DRUPAL_DB < /home/ec2-user/data/$DB_DUMP_NAME_ONLY"
+                '''
             }
         }
     }
