@@ -12,13 +12,21 @@ pipeline {
         SSH_CONFIG_NAME = "rocinante-lemp"
         SSH_KEY = credentials('rocinante_ssh_key')
         SITE_DIR = "/var/www/html/rocinante"
-        IP_ADDRESS = "18.185.66.222"
+        IP_ADDRESS = "35.159.0.152"
+        SSH_PORT = credentials('rocinante_ssh_port')
         ARCHIVE_NAME = "rocinante_220503.tar.bz"
         MYSQL_ADMIN = credentials('rocinante_mysql_admin')
         MYSQL_DRUPAL_DB = credentials('rocinante_mysql_drupal_db')
         DB_DUMP_NAME = "rocinante_db_220503.sql.bz"
         DB_DUMP_NAME_ONLY = "rocinante_db_220503.sql"
     }
+    def remote = [:]
+    remote.name = "rocinante-lemp"
+    remote.host = "$IP_ADDRESS"
+    remote.user = 'ec2-user'
+    remote.identityFile = "$SSH_KEY"
+    remote.port = "$SSH_PORT"
+    remote.allowAnyHosts = true
     stages {
         stage('Decript') {
             steps {
@@ -69,23 +77,21 @@ pipeline {
         }
         stage('Deployment Site') {
             steps {
-                sh '''
-                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo rm -fr $SITE_DIR/www
-                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo mkdir $SITE_DIR/www
-                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1
-                    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo chown -R nginx: $SITE_DIR/www
-                '''
+                sshCommand remote: remote, command: "sudo rm -fr $SITE_DIR/www"
+                sshCommand remote: remote, command: "sudo mkdir $SITE_DIR/www"
+                sshCommand remote: remote, command: "sudo tar -xvf /home/ec2-user/data/$ARCHIVE_NAME -C $SITE_DIR/www --strip-components=1"
+                sshCommand remote: remote, command: "sudo chown -R nginx: $SITE_DIR/www"
             }
         }
-        stage('Deployment DB') {
-            steps {
-                sh '''
-                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'DROP DATABASE IF EXISTS $MYSQL_DRUPAL_DB';"
-                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'CREATE DATABASE $MYSQL_DRUPAL_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
-                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/$DB_DUMP_NAME
-                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p 22 ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -A -D $MYSQL_DRUPAL_DB < /home/ec2-user/data/$DB_DUMP_NAME_ONLY"
-                '''
-            }
-        }
+        //stage('Deployment DB') {
+        //    steps {
+        //        sh '''
+        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'DROP DATABASE IF EXISTS $MYSQL_DRUPAL_DB';"
+        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'CREATE DATABASE $MYSQL_DRUPAL_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
+        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/$DB_DUMP_NAME
+        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -A -D $MYSQL_DRUPAL_DB < /home/ec2-user/data/$DB_DUMP_NAME_ONLY"
+        //        '''
+        //    }
+        //}
     }
 }
