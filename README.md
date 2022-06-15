@@ -45,6 +45,16 @@ Status of our Actions:
 </p>
 <img src="https://github.com/bochinskii/rocinante-update/workflows/Deploy_Drupal_9_site/badge.svg?branch=main"><br>
 <br>
+<br>
+<br>
+<p>
+Так же есть 2-а Jenkinsfile'а: Jenkinsfile_v1 и Jenkinsfile_v2. Они выполняют походую функцию
+как и GitHub Actions.
+</p>
+<p>
+Jenkinsfile_v1 - мы используем ssh комманды из shell'а, а в Jenkinsfile_v2 -
+используем плагин - SSH Pipeline Steps
+</p>
 <p>
 Denis Bochinskii
 </p>
