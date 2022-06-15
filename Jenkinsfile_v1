@@ -88,5 +88,14 @@ pipeline {
                 '''
             }
         }
+        post {
+            always {
+                echo "Clean up"
+                deleteDir()
+                sh '''
+                    ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS sudo rm -fr /home/ec2-user/data
+                '''
+            }
+        }
     }
 }
