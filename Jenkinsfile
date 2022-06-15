@@ -70,7 +70,7 @@ pipeline {
         }
         stage('Deployment Site') {
             steps {
-                def remote = [
+                remote = [
                     name = "rocinante-lemp"
                     host = "$IP_ADDRESS"
                     user = 'ec2-user'
