@@ -85,5 +85,23 @@ pipeline {
                 }
             }
         }
+        stage('Deployment DB') {
+            steps {
+                script {
+                    def remote = [:]
+                    remote.name = "rocinante-lemp"
+                    remote.host = "$IP_ADDRESS"
+                    remote.user = 'ec2-user'
+                    remote.identityFile = "$SSH_KEY"
+                    remote.allowAnyHosts = true
+
+                    sshCommand remote: remote, command: "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'DROP DATABASE IF EXISTS $MYSQL_DRUPAL_DB';"
+                    sshCommand remote: remote, command: "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'CREATE DATABASE $MYSQL_DRUPAL_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
+                    sshCommand remote: remote, command: "sudo bunzip2 /home/ec2-user/data/$DB_DUMP_NAME"
+                    sshCommand remote: remote, command: "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -A -D $MYSQL_DRUPAL_DB < /home/ec2-user/data/$DB_DUMP_NAME_ONLY"
+
+                }
+            }
+        }
     }
 }
