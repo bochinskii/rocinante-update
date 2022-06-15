@@ -86,15 +86,5 @@ pipeline {
                 }
             }
         }
-        //stage('Deployment DB') {
-        //    steps {
-        //        sh '''
-        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'DROP DATABASE IF EXISTS $MYSQL_DRUPAL_DB';"
-        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -e 'CREATE DATABASE $MYSQL_DRUPAL_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';"
-        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS sudo bunzip2 /home/ec2-user/data/$DB_DUMP_NAME
-        //            ssh -i $SSH_KEY  -o StrictHostKeyChecking=no -p $SSH_PORT ec2-user@$IP_ADDRESS "sudo mysql --connect-expired-password -u$MYSQL_ADMIN_USR -p$MYSQL_ADMIN_PSW -A -D $MYSQL_DRUPAL_DB < /home/ec2-user/data/$DB_DUMP_NAME_ONLY"
-        //        '''
-        //    }
-        //}
     }
 }
